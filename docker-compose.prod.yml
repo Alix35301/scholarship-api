@@ -33,6 +33,7 @@ services:
             - traefik.http.routers.laravel_8.rule=Host(`165.232.186.50`)
             - traefik.http.routers.laravel_8.entrypoints=web
             - traefik.http.routers.laravel_8.tls=true
+            - traefik.http.services.laravel_8.loadbalancer.server.port=80
             - traefik.http.routers.laravel_8.service=laravel_8
 
         networks:
