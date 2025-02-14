@@ -1,6 +1,7 @@
 services:
     # image project
     laravel_8:
+        tty: true
         build:
             args:
                 user: ali
