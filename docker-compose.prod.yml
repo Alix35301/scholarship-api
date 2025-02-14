@@ -26,6 +26,14 @@ services:
         volumes:
             - ./:/var/www
             - ./docker/production/nginx/:/etc/nginx/conf.d/
+
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.laravel_8.rule=Host(`165.232.186.50`)
+            - traefik.http.routers.laravel_8.entrypoints=web
+            - traefik.http.routers.laravel_8.tls=true
+            - traefik.http.routers.laravel_8.service=laravel_8
+
         networks:
             - traefik-proxy
             - laravel-eti
