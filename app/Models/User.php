@@ -21,6 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'status',
+        'commission_rate',
+        'notes',
+        'role'
     ];
 
     /**
@@ -43,6 +48,48 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'commission_rate' => 'decimal:2',
+            'status' => 'string',
         ];
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class, 'seller_id');
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class, 'organizer_id');
+    }
+
+    public function getTotalSalesAttribute()
+    {
+        return $this->sales()->where('status', 'completed')->count();
+    }
+
+    public function getTotalRevenueAttribute()
+    {
+        return $this->sales()->where('status', 'completed')->sum('total_amount');
+    }
+
+    public function getTotalCommissionAttribute()
+    {
+        return $this->total_revenue * ($this->commission_rate / 100);
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isSeller()
+    {
+        return $this->role === 'seller';
     }
 }
