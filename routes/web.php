@@ -15,8 +15,12 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
+    Log::info('Root route headers:', [
+        'headers' => $request->headers->all()
+    ]);
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -85,16 +89,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('events/{event}/expenses/import', [ExpenseController::class, 'import'])->name('events.expenses.import');
 });
 
-Route::middleware('web')->group(function () {
-    Route::get('/login', function(\Illuminate\Http\Request $request) {
-        Log::info('Login route headers:', [
-            'headers' => $request->headers->all()
-        ]);
-        return Inertia::render('Auth/Login', [
-            'canResetPassword' => Route::has('password.request'),
-            'status' => session('status'),
-        ]);
-    })->name('login');
-});
 
 require __DIR__.'/auth.php';
