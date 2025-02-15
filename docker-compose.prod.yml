@@ -45,6 +45,7 @@ services:
     # db mysql
 
     mysql:
+        container_name: db_container
         image: 'mysql/mysql-server:8.0'
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'
@@ -59,6 +60,7 @@ services:
             - 'sail-mysql:/var/lib/mysql'
             - './docker/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
         networks:
+            - laravel-eti
             - traefik-proxy
         healthcheck:
             test:
