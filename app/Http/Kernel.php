@@ -24,8 +24,8 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
+            // \App\Http\Middleware\HandleInertiaRequests::class,
+            // \App\Http\Middleware\VerifyCsrfToken::class,
 
             // Web middleware group
         ],
