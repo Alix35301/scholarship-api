@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 // use App\Http\Controllers\Api\ExpenseController;
 // use App\Http\Controllers\Api\SellerController;
 use App\Http\Controllers\Api\ScholarshipController;
+use App\Http\Controllers\Api\ApplicationAwardController;
 use App\Http\Controllers\Api\ScholarshipApplicationController;
 use App\Http\Controllers\Api\ScholarshipAwardController;
 use App\Http\Controllers\Api\ScholarshipReceiptController;
@@ -98,13 +99,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
-        POST /api/admin/applications/{id}/award
-        POST /api/admin/awards/{awardId}/schedules
-        POST /api/admin/disbursements/{id}/pay
-        GET /api/admin/disbursements
-        POST /api/admin/receipts/{id}/verify
-        GET /api/admin/reports/scholarships/{id}
-        GET /api/admin/reports/awards/{awardId}
+        // POST /api/admin/applications/{id}/award
+        // POST /api/admin/awards/{awardId}/schedules
+        // POST /api/admin/disbursements/{id}/pay
+        // GET /api/admin/disbursements
+        // POST /api/admin/receipts/{id}/verify
+        // GET /api/admin/reports/scholarships/{id}
+        // GET /api/admin/reports/awards/{awardId}
                 
         // Sellers
         // Route::apiResource('sellers', SellerController::class);

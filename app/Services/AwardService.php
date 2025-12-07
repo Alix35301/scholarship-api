@@ -10,14 +10,16 @@ class AwardService
 {
     public function createAwardFromApplication(ScholarshipApplication $application): Award
     {
-        // Load the application with cost categories if not already loaded
-        $application->load('costCategories');
+        // Check if application already has an award
+        if ($application->award) {
+            throw new \Exception('This application has already been awarded.');
+        }
 
         // Calculate total amount from category costs
         $totalAmount = 0;
         if ($application->category_costs) {
-            foreach ($application->category_costs as $cost) {
-                $totalAmount += $cost['amount'] ?? 0;
+            foreach ($application->category_costs as $categoryId => $amount) {
+                $totalAmount += $amount;
             }
         }
 
@@ -31,12 +33,12 @@ class AwardService
 
         // Create planned disbursements from category costs
         if ($application->category_costs) {
-            foreach ($application->category_costs as $cost) {
+            foreach ($application->category_costs as $categoryId => $amount) {
                 PlannedDisbursement::create([
                     'award_id' => $award->id,
-                    'cost_category_id' => $cost['cost_category_id'],
-                    'allocated_amount' => $cost['amount'],
-                    'remaining_amount' => $cost['amount'],
+                    'cost_category_id' => $categoryId,
+                    'allocated_amount' => $amount,
+                    'remaining_amount' => $amount,
                 ]);
             }
         }
