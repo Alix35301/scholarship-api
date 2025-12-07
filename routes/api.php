@@ -1,11 +1,11 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\EventController;
-use App\Http\Controllers\Api\ProductController;
-use App\Http\Controllers\Api\SaleController;
-use App\Http\Controllers\Api\ExpenseController;
-use App\Http\Controllers\Api\SellerController;
+// use App\Http\Controllers\Api\EventController;
+// use App\Http\Controllers\Api\ProductController;
+// use App\Http\Controllers\Api\SaleController;
+// use App\Http\Controllers\Api\ExpenseController;
+// use App\Http\Controllers\Api\SellerController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\ScholarshipApplicationController;
 use App\Http\Controllers\Api\ScholarshipReceiptController;
@@ -27,8 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Scholarship Applications
     Route::get('/applications', [ScholarshipApplicationController::class, 'index']);
     Route::post('/applications', [ScholarshipApplicationController::class, 'store'])->middleware('student');
-    Route::get('/applications/{application}', [ScholarshipApplicationController::class, 'show']);
     Route::post('/applications/{application}/documents', [ScholarshipApplicationController::class, 'uploadDocuments'])->middleware('student');
+    Route::get('/applications/{application}', [ScholarshipApplicationController::class, 'show']);
     
     // Scholarship Receipts
     Route::get('/receipts', [ScholarshipReceiptController::class, 'index']);
@@ -49,10 +49,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/receipts/{receipt}/verify', [ScholarshipReceiptController::class, 'verify']);
         
         // Sellers
-        Route::apiResource('sellers', SellerController::class);
+        // Route::apiResource('sellers', SellerController::class);
     });
 
     // Events
+    /*
     Route::prefix('v1')->group(function () {
         Route::apiResource('events', EventController::class);
         Route::get('events/{event}/dashboard', [EventController::class, 'dashboard']);
@@ -69,5 +70,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('events.expenses', ExpenseController::class);
         Route::post('events/{event}/expenses/import', [ExpenseController::class, 'import']);
     });
+    */
 });
 

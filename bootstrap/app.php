@@ -17,6 +17,11 @@
                 \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             ]);
 
+            $middleware->alias([
+                'admin' => \App\Http\Middleware\AdminMiddleware::class,
+                'student' => \App\Http\Middleware\StudentMiddleware::class,
+            ]);
+
             // // Use numeric values for proxy headers
             // $middleware->trustProxies(headers:
             //     0x1 | // X_FORWARDED_FOR

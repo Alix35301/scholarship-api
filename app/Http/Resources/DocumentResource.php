@@ -17,7 +17,6 @@ class DocumentResource extends JsonResource
             'mime_type' => $this->mime_type,
             'file_size' => $this->file_size,
             'description' => $this->description,
-            'application' => new ScholarshipApplicationResource($this->whenLoaded('application')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
