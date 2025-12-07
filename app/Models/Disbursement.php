@@ -29,5 +29,10 @@ class Disbursement extends Model
     {
         return $this->belongsTo(PlannedDisbursement::class);
     }
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class);
+    }
 }
 

@@ -11,6 +11,7 @@ class Document extends Model
 
     protected $fillable = [
         'application_id',
+        'disbursement_id',
         'file_name',
         'file_path',
         'mime_type',
@@ -21,6 +22,11 @@ class Document extends Model
     public function application()
     {
         return $this->belongsTo(ScholarshipApplication::class, 'application_id');
+    }
+
+    public function disbursement()
+    {
+        return $this->belongsTo(Disbursement::class, 'disbursement_id');
     }
 }
 
