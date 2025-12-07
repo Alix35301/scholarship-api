@@ -26,9 +26,12 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Scholarship Applications
     Route::get('/applications', [ScholarshipApplicationController::class, 'index']);
+    Route::get('/my-applications', [ScholarshipApplicationController::class, 'myApplications']);
     Route::post('/applications', [ScholarshipApplicationController::class, 'store'])->middleware('student');
     Route::post('/applications/{application}/documents', [ScholarshipApplicationController::class, 'uploadDocuments'])->middleware('student');
     Route::get('/applications/{application}', [ScholarshipApplicationController::class, 'show']);
+    
+
     
     // Scholarship Receipts
     Route::get('/receipts', [ScholarshipReceiptController::class, 'index']);

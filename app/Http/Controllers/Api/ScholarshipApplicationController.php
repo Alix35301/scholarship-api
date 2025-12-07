@@ -27,6 +27,16 @@ class ScholarshipApplicationController extends Controller
         return ScholarshipApplicationResource::collection($applications);
     }
 
+    public function myApplications(Request $request)
+    {
+        $applications = ScholarshipApplication::where('student_id', $request->user()->id)
+            ->with(['scholarship', 'student', 'reviewer', 'receipts'])
+            ->latest()
+            ->paginate();
+
+        return ScholarshipApplicationResource::collection($applications);
+    }
+
     public function store(ScholarshipApplicationRequest $request)
     {
         $application = ScholarshipApplication::create([
