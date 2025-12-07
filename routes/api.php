@@ -28,10 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Budgets
     Route::get('/scholarships/{scholarship}/budgets', [ScholarshipBudgetController::class, 'index']);
-    Route::post('/scholarships/{scholarship}/budgets', [ScholarshipBudgetController::class, 'store']);
     Route::get('/scholarships/{scholarship}/budgets/{budget}', [ScholarshipBudgetController::class, 'show']);
-    Route::put('/scholarships/{scholarship}/budgets/{budget}', [ScholarshipBudgetController::class, 'update']);
-    Route::delete('/scholarships/{scholarship}/budgets/{budget}', [ScholarshipBudgetController::class, 'destroy']);
+  
     // Scholarships
     Route::get('/scholarships', [ScholarshipController::class, 'index']);
     Route::get('/scholarships/{scholarship}', [ScholarshipController::class, 'show']);
@@ -78,17 +76,36 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/scholarships', [ScholarshipController::class, 'store']);
         Route::put('/scholarships/{scholarship}', [ScholarshipController::class, 'update']);
         Route::delete('/scholarships/{scholarship}', [ScholarshipController::class, 'destroy']);
+
+        // Applications management
+        Route::get('/admin/applications', [ScholarshipApplicationController::class, 'adminIndex']);
+        Route::get('/admin/applications/{id}', [ScholarshipApplicationController::class, 'adminShow']);
+        Route::post('/admin/applications/{id}/review', [ScholarshipApplicationController::class, 'review']);
+
+        Route::post('/scholarships/{scholarship}/budgets', [ScholarshipBudgetController::class, 'store']);
+        Route::put('/scholarships/{scholarship}/budgets/{budget}', [ScholarshipBudgetController::class, 'update']);
+        Route::delete('/scholarships/{scholarship}/budgets/{budget}', [ScholarshipBudgetController::class, 'destroy']);
         
+        Route::get('/cost-categories', [CostCategoryController::class, 'index']);
+        Route::post('/cost-categories', [CostCategoryController::class, 'store']);
+
+
+        ///admin/applications/
+        Route::post('/admin/applications/{id}/award', [ApplicationAwardController::class, 'store']);
+
         // Application review
         Route::post('/admin/applications/{id}/review', [ScholarshipApplicationController::class, 'review']);
-        
-        // Receipt verification
-        Route::post('/receipts/{receipt}/verify', [ScholarshipReceiptController::class, 'verify']);
-        
-        // Awards management
-        Route::get('/awards', [ScholarshipAwardController::class, 'adminIndex']);
-        Route::get('/awards/{award}', [ScholarshipAwardController::class, 'show']);
-        
+
+
+
+        POST /api/admin/applications/{id}/award
+        POST /api/admin/awards/{awardId}/schedules
+        POST /api/admin/disbursements/{id}/pay
+        GET /api/admin/disbursements
+        POST /api/admin/receipts/{id}/verify
+        GET /api/admin/reports/scholarships/{id}
+        GET /api/admin/reports/awards/{awardId}
+                
         // Sellers
         // Route::apiResource('sellers', SellerController::class);
     });

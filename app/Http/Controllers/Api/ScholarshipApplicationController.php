@@ -84,10 +84,6 @@ class ScholarshipApplicationController extends Controller
             'reviewed_at' => now(),
         ]);
 
-        // Create award if application is approved
-        if ($newStatus === ApplicationStatus::Approved) {
-            $this->awardService->createAwardFromApplication($application);
-        }
 
         $application->load(['scholarship', 'student', 'reviewer']);
 
