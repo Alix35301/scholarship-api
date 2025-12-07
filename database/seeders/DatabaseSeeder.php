@@ -70,6 +70,7 @@ class DatabaseSeeder extends Seeder
             ScholarshipBudgetSeeder::class,
             ScholarshipApplicationSeeder::class,
             ActivityLogSeeder::class,
+            AwardSeeder::class,
         ]);
     }
 }
