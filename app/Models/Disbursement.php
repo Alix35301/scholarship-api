@@ -30,9 +30,9 @@ class Disbursement extends Model
         return $this->belongsTo(PlannedDisbursement::class);
     }
 
-    public function documents()
+    public function receipts()
     {
-        return $this->hasMany(Document::class);
+        return $this->hasMany(DisbursementReceipt::class);
     }
 }
 

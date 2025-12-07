@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Document extends Model
+class DisbursementReceipt extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'application_id',
+        'disbursement_id',
         'file_name',
         'file_path',
         'mime_type',
@@ -18,9 +18,9 @@ class Document extends Model
         'description',
     ];
 
-    public function application()
+    public function disbursement()
     {
-        return $this->belongsTo(ScholarshipApplication::class, 'application_id');
+        return $this->belongsTo(Disbursement::class);
     }
 }
 

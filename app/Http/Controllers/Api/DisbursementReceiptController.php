@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentUploadRequest;
-use App\Http\Resources\DocumentResource;
+use App\Http\Resources\DisbursementReceiptResource;
 use App\Models\Disbursement;
-use App\Models\Document;
+use App\Models\DisbursementReceipt;
 
 class DisbursementReceiptController extends Controller
 {
@@ -22,9 +22,9 @@ class DisbursementReceiptController extends Controller
 
         $file = $request->file('file');
         $fileName = time() . '_' . $file->getClientOriginalName();
-        $filePath = $file->storeAs('documents/disbursements/' . $disbursement->id, $fileName, 'public');
+        $filePath = $file->storeAs('receipts/disbursements/' . $disbursement->id, $fileName, 'public');
 
-        $document = Document::create([
+        $receipt = DisbursementReceipt::create([
             'disbursement_id' => $disbursement->id,
             'file_name' => $file->getClientOriginalName(),
             'file_path' => $filePath,
@@ -33,9 +33,9 @@ class DisbursementReceiptController extends Controller
             'description' => $request->description,
         ]);
 
-        $document->load('disbursement');
+        $receipt->load('disbursement');
 
-        return new DocumentResource($document);
+        return new DisbursementReceiptResource($receipt);
     }
 }
 
