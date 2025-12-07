@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('documents', function (Blueprint $table) {
+        Schema::create('application_documents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('application_id')->nullable()->constrained('scholarship_applications')->onDelete('cascade');
+            $table->foreignId('application_id')->constrained('scholarship_applications')->onDelete('cascade');
             $table->string('file_name');
             $table->string('file_path');
             $table->string('mime_type')->nullable();
@@ -22,7 +22,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('documents');
+        Schema::dropIfExists('application_documents');
     }
 };
 

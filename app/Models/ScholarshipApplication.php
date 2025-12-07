@@ -71,7 +71,7 @@ class ScholarshipApplication extends Model
 
     public function documents()
     {
-        return $this->hasMany(Document::class, 'application_id');
+        return $this->hasMany(ApplicationDocument::class, 'application_id');
     }
 
     public function award()

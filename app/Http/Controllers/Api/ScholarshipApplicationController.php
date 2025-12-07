@@ -8,9 +8,9 @@ use App\Http\Requests\DocumentUploadRequest;
 use App\Http\Requests\ReviewApplicationRequest;
 use App\Http\Requests\ScholarshipApplicationRequest;
 use App\Http\Resources\ActivityLogResource;
-use App\Http\Resources\DocumentResource;
+use App\Http\Resources\ApplicationDocumentResource;
 use App\Http\Resources\ScholarshipApplicationResource;
-use App\Models\Document;
+use App\Models\ApplicationDocument;
 use App\Models\ScholarshipApplication;
 use App\Services\ActivityLogService;
 use App\Services\AwardService;
@@ -116,7 +116,7 @@ class ScholarshipApplicationController extends Controller
         $fileName = time() . '_' . $file->getClientOriginalName();
         $filePath = $file->storeAs('documents/applications/' . $application->id, $fileName, 'public');
 
-        $document = Document::create([
+        $document = ApplicationDocument::create([
             'application_id' => $application->id,
             'file_name' => $file->getClientOriginalName(),
             'file_path' => $filePath,
@@ -127,7 +127,7 @@ class ScholarshipApplicationController extends Controller
 
         $document->load('application');
 
-        return new DocumentResource($document);
+        return new ApplicationDocumentResource($document);
     }
 
     public function logs(Request $request, ScholarshipApplication $application)
