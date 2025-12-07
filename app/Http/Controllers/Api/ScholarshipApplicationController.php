@@ -73,9 +73,10 @@ class ScholarshipApplicationController extends Controller
         $application = ScholarshipApplication::findOrFail($id);
         
         $oldStatus = $application->status;
+        $newStatus = ApplicationStatus::from($request->status);
 
         $application->update([
-            'status' => $request->status,
+            'status' => $newStatus,
             'rejection_reason' => $request->rejection_reason,
             'reviewed_by' => $request->user()->id,
             'reviewed_at' => now(),
@@ -85,10 +86,10 @@ class ScholarshipApplicationController extends Controller
 
         $this->activityLogService->log(
             $application,
-            $request->status === ApplicationStatus::Approved ? 'Application approved' : 'Application rejected',
+            $newStatus === ApplicationStatus::Approved ? 'Application approved' : 'Application rejected',
             [
                 'old_status' => $oldStatus->value,
-                'new_status' => $request->status->value,
+                'new_status' => $newStatus->value,
                 'rejection_reason' => $request->rejection_reason,
                 'reviewed_by' => $request->user()->id,
             ],
