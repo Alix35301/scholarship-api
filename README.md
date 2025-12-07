@@ -2,9 +2,10 @@
 
 ## Setup
 
-1. `composer install`
-2. `sail up -d`
-3. `sail artisan migrate:fresh --seed`
+1. `cp .env.example .env`
+2. `composer install`
+3. `sail up -d`
+4. `sail artisan migrate:fresh --seed`
 
 ## Testing
 
@@ -15,3 +16,6 @@ Paste the token in your Postman collection and test the routes.
 
 ## ERD is attached on the repo
 schema.png
+
+## Postman Collection is attached
+/storage/postman/api_collection

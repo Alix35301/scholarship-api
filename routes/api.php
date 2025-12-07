@@ -1,16 +1,11 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-// use App\Http\Controllers\Api\EventController;
-// use App\Http\Controllers\Api\ProductController;
-// use App\Http\Controllers\Api\SaleController;
-// use App\Http\Controllers\Api\ExpenseController;
-// use App\Http\Controllers\Api\SellerController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\ApplicationAwardController;
 use App\Http\Controllers\Api\ScholarshipApplicationController;
+use App\Http\Controllers\Api\AdminScholarshipApplicationController;
 use App\Http\Controllers\Api\ScholarshipAwardController;
-use App\Http\Controllers\Api\ScholarshipReceiptController;
 use App\Http\Controllers\Api\ScholarshipBudgetController;
 use App\Http\Controllers\Api\CostCategoryController;
 use App\Http\Controllers\Api\DisbursementController;
@@ -61,10 +56,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/disbursements/{disbursement}', [DisbursementController::class, 'update']);
     Route::delete('/disbursements/{disbursement}', [DisbursementController::class, 'destroy']);
 
-    // Scholarship Receipts
-    Route::get('/receipts', [ScholarshipReceiptController::class, 'index']);
-    Route::post('/receipts', [ScholarshipReceiptController::class, 'store'])->middleware('student');
-    Route::get('/receipts/{receipt}', [ScholarshipReceiptController::class, 'show']);
 
     // Cost Categories
     Route::get('/cost-categories', [CostCategoryController::class, 'index']);
@@ -84,8 +75,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/scholarships/{scholarship}', [ScholarshipController::class, 'destroy']);
 
         // Applications management
-        Route::get('/admin/applications', [ScholarshipApplicationController::class, 'adminIndex']);
-        Route::get('/admin/applications/{id}', [ScholarshipApplicationController::class, 'adminShow']);
+        Route::get('/admin/applications', [AdminScholarshipApplicationController::class, 'adminIndex']);
+        Route::get('/admin/applications/{id}', [AdminScholarshipApplicationController::class, 'adminShow']);
         Route::post('/admin/applications/{id}/review', [ScholarshipApplicationController::class, 'review']);
 
         Route::post('/scholarships/{scholarship}/budgets', [ScholarshipBudgetController::class, 'store']);
