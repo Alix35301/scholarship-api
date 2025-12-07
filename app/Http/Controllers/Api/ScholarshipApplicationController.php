@@ -30,7 +30,7 @@ class ScholarshipApplicationController extends Controller
     public function myApplications(Request $request)
     {
         $applications = ScholarshipApplication::where('student_id', $request->user()->id)
-            ->with(['scholarship', 'student', 'reviewer', 'receipts'])
+            ->with(['scholarship', 'student', 'reviewer', 'receipts', 'documents'])
             ->latest()
             ->paginate();
 
