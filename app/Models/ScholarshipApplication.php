@@ -74,6 +74,18 @@ class ScholarshipApplication extends Model
         return $this->hasMany(Document::class, 'application_id');
     }
 
+    public function award()
+    {
+        return $this->hasOne(Award::class);
+    }
+
+    public function costCategories()
+    {
+        return $this->belongsToMany(CostCategory::class, 'application_cost_category')
+            ->withPivot('amount')
+            ->withTimestamps();
+    }
+
     public function getAmountAttribute()
     {
         return $this->scholarship->amount ?? 0;

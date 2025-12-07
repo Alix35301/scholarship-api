@@ -13,6 +13,7 @@ use App\Http\Resources\ScholarshipApplicationResource;
 use App\Models\Document;
 use App\Models\ScholarshipApplication;
 use App\Services\ActivityLogService;
+use App\Services\AwardService;
 use App\Services\ScholarshipApplicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +22,8 @@ class ScholarshipApplicationController extends Controller
 {
     public function __construct(
         private ScholarshipApplicationService $scholarshipApplicationService,
-        private ActivityLogService $activityLogService
+        private ActivityLogService $activityLogService,
+        private AwardService $awardService
     ) {
     }
 
@@ -81,6 +83,11 @@ class ScholarshipApplicationController extends Controller
             'reviewed_by' => $request->user()->id,
             'reviewed_at' => now(),
         ]);
+
+        // Create award if application is approved
+        if ($newStatus === ApplicationStatus::Approved) {
+            $this->awardService->createAwardFromApplication($application);
+        }
 
         $application->load(['scholarship', 'student', 'reviewer']);
 

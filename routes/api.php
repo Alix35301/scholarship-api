@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ScholarshipAwardController;
 use App\Http\Controllers\Api\ScholarshipReceiptController;
 use App\Http\Controllers\Api\ScholarshipBudgetController;
 use App\Http\Controllers\Api\CostCategoryController;
+use App\Http\Controllers\Api\DisbursementController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -44,7 +45,14 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // my awards
     Route::get('/my-awards', [ScholarshipAwardController::class, 'index']);
-    
+    Route::get('/my-awards/{award}', [ScholarshipAwardController::class, 'myShow']);
+
+    // disbursements
+    Route::get('/awards/{award}/disbursements', [DisbursementController::class, 'index']);
+    Route::post('/disbursements', [DisbursementController::class, 'store']);
+    Route::put('/disbursements/{disbursement}', [DisbursementController::class, 'update']);
+    Route::delete('/disbursements/{disbursement}', [DisbursementController::class, 'destroy']);
+
     // Scholarship Receipts
     Route::get('/receipts', [ScholarshipReceiptController::class, 'index']);
     Route::post('/receipts', [ScholarshipReceiptController::class, 'store'])->middleware('student');
@@ -72,6 +80,10 @@ Route::middleware('auth:sanctum')->group(function () {
         
         // Receipt verification
         Route::post('/receipts/{receipt}/verify', [ScholarshipReceiptController::class, 'verify']);
+        
+        // Awards management
+        Route::get('/awards', [ScholarshipAwardController::class, 'adminIndex']);
+        Route::get('/awards/{award}', [ScholarshipAwardController::class, 'show']);
         
         // Sellers
         // Route::apiResource('sellers', SellerController::class);
