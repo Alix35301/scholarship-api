@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\AuthController;
 // use App\Http\Controllers\Api\SellerController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\ScholarshipApplicationController;
+use App\Http\Controllers\Api\ScholarshipAwardController;
 use App\Http\Controllers\Api\ScholarshipReceiptController;
 use App\Http\Controllers\Api\ScholarshipBudgetController;
 use App\Http\Controllers\Api\CostCategoryController;
@@ -41,7 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/applications/{application}', [ScholarshipApplicationController::class, 'show']);
     Route::get('/applications/{application}/logs', [ScholarshipApplicationController::class, 'logs']);
     
-
+    // my awards
+    Route::get('/my-awards', [ScholarshipAwardController::class, 'index']);
     
     // Scholarship Receipts
     Route::get('/receipts', [ScholarshipReceiptController::class, 'index']);
