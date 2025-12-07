@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDisbursementRequest;
 use App\Http\Requests\UpdateDisbursementRequest;
 use App\Http\Resources\DisbursementResource;
+use App\Http\Resources\PlannedDisbursementResource;
 use App\Models\Award;
 use App\Models\Disbursement;
 use App\Models\PlannedDisbursement;
@@ -20,14 +21,65 @@ class DisbursementController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $disbursements = $award->plannedDisbursements()
-            ->with(['costCategory', 'disbursements'])
-            ->get()
-            ->flatMap(function ($plannedDisbursement) {
-                return $plannedDisbursement->disbursements;
-            });
+        $type = $request->query('type', 'all'); // 'all', 'planned', 'actual'
 
-        return DisbursementResource::collection($disbursements);
+        if ($type === 'planned') {
+            // Return only planned disbursements
+            $query = PlannedDisbursement::where('award_id', $award->id)
+                ->with(['costCategory']);
+
+            // Allow filtering by cost_category_id
+            if ($request->has('cost_category_id')) {
+                $query->where('cost_category_id', $request->query('cost_category_id'));
+            }
+
+            $results = $query->paginate($request->query('per_page', 15));
+            return PlannedDisbursementResource::collection($results);
+        }
+
+        if ($type === 'actual') {
+            // Return only actual disbursements
+            $plannedIds = $award->plannedDisbursements()->pluck('id');
+            $query = Disbursement::whereIn('planned_disbursement_id', $plannedIds)
+                ->with(['plannedDisbursement.costCategory']);
+
+            // Allow filtering by status
+            if ($request->has('status')) {
+                $query->where('status', $request->query('status'));
+            }
+
+            // Allow filtering by cost_category_id through planned disbursements
+            if ($request->has('cost_category_id')) {
+                $query->whereHas('plannedDisbursement', function ($q) use ($request) {
+                    $q->where('cost_category_id', $request->query('cost_category_id'));
+                });
+            }
+
+            // Allow filtering by date range
+            if ($request->has('date_from')) {
+                $query->where('date', '>=', $request->query('date_from'));
+            }
+            if ($request->has('date_to')) {
+                $query->where('date', '<=', $request->query('date_to'));
+            }
+
+            $results = $query->orderBy('date', 'desc')->paginate($request->query('per_page', 15));
+            return DisbursementResource::collection($results);
+        }
+
+        // Return all (both planned and actual) - default behavior
+        $plannedDisbursements = $award->plannedDisbursements()
+            ->with(['costCategory', 'disbursements'])
+            ->get();
+
+        return response()->json([
+            'data' => [
+                'planned' => PlannedDisbursementResource::collection($plannedDisbursements),
+                'actual' => DisbursementResource::collection(
+                    $plannedDisbursements->flatMap(fn($pd) => $pd->disbursements)
+                ),
+            ],
+        ]);
     }
 
     public function store(StoreDisbursementRequest $request)
