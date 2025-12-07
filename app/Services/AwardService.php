@@ -6,6 +6,7 @@ use App\Models\Award;
 use App\Models\PlannedDisbursement;
 use App\Models\ScholarshipApplication;
 use App\Models\ScholarshipBudget;
+use Illuminate\Support\Facades\DB;
 
 class AwardService
 {
@@ -62,30 +63,32 @@ class AwardService
             }
         }
 
-        // Create the award
-        $award = Award::create([
-            'student_id' => $application->student_id,
-            'application_id' => $application->id,
-            'total_amount' => $totalAmount,
-            'status' => 'awarded',
-        ]);
+        return DB::transaction(function () use ($application, $totalAmount) {
+            // Create the award
+            $award = Award::create([
+                'student_id' => $application->student_id,
+                'application_id' => $application->id,
+                'total_amount' => $totalAmount,
+                'status' => 'awarded',
+            ]);
 
-        // Create planned disbursements from category costs
-        if ($application->category_costs) {
-            foreach ($application->category_costs as $categoryId => $amount) {
-                $plannedDisbursement = PlannedDisbursement::create([
-                    'award_id' => $award->id,
-                    'cost_category_id' => $categoryId,
-                    'allocated_amount' => $amount,
-                    'remaining_amount' => $amount,
-                ]);
+            // Create planned disbursements from category costs
+            if ($application->category_costs) {
+                foreach ($application->category_costs as $categoryId => $amount) {
+                    $plannedDisbursement = PlannedDisbursement::create([
+                        'award_id' => $award->id,
+                        'cost_category_id' => $categoryId,
+                        'allocated_amount' => $amount,
+                        'remaining_amount' => $amount,
+                    ]);
 
-                // Auto-generate payment schedules based on cost category disbursement rules
-                $this->scheduleService->generateSchedulesForPlannedDisbursement($plannedDisbursement);
+                    // Auto-generate payment schedules based on cost category disbursement rules
+                    $this->scheduleService->generateSchedulesForPlannedDisbursement($plannedDisbursement);
+                }
             }
-        }
 
-        return $award->load(['plannedDisbursements.costCategory', 'student', 'application']);
+            return $award->load(['plannedDisbursements.costCategory', 'student', 'application']);
+        });
     }
 }
 
