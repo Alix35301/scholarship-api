@@ -96,7 +96,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ///admin/applications/
         Route::post('/admin/applications/{id}/award', [ApplicationAwardController::class, 'store']);
 
-        // Application review
         Route::post('/admin/applications/{id}/review', [ScholarshipApplicationController::class, 'review']);
 
         // schedules
@@ -109,29 +108,8 @@ Route::middleware('auth:sanctum')->group(function () {
         // POST /api/admin/receipts/{id}/verify
         // GET /api/admin/reports/scholarships/{id}
         // GET /api/admin/reports/awards/{awardId}
-                
-        // Sellers
-        // Route::apiResource('sellers', SellerController::class);
+
     });
 
-    // Events
-    /*
-    Route::prefix('v1')->group(function () {
-        Route::apiResource('events', EventController::class);
-        Route::get('events/{event}/dashboard', [EventController::class, 'dashboard']);
-        Route::get('events/{event}/report', [EventController::class, 'report']);
-
-        // Products (scoped to events)
-        Route::apiResource('events.products', ProductController::class);
-
-        // Sales (scoped to events)
-        Route::apiResource('events.sales', SaleController::class);
-        Route::patch('events/{event}/sales/{sale}/status', [SaleController::class, 'updateStatus']);
-
-        // Expenses (scoped to events)
-        Route::apiResource('events.expenses', ExpenseController::class);
-        Route::post('events/{event}/expenses/import', [ExpenseController::class, 'import']);
-    });
-    */
 });
 

@@ -15,8 +15,16 @@ class StoreCostCategoryRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255', 'unique:cost_categories,name'],
-            'slug' => ['nullable', 'string', 'max:255', 'unique:cost_categories,slug'],
-            'description' => ['nullable', 'string'],
+            'category' => ['required', 'in:tuition,stipend,travel'],
+            'disbursement_type' => ['nullable', 'in:semester,monthly,reimbursement'],
+            'disbursement_config' => ['nullable', 'array'],
+            'disbursement_config.frequency' => ['nullable', 'string'],
+            'disbursement_config.periods' => ['nullable', 'integer', 'min:1'],
+            'disbursement_config.months' => ['nullable', 'array'],
+            'disbursement_config.months.*' => ['integer', 'between:1,12'],
+            'disbursement_config.duration_months' => ['nullable', 'integer', 'min:1'],
+            'disbursement_config.start_month' => ['nullable', 'integer', 'between:1,12'],
+            'disbursement_config.max_claims' => ['nullable', 'integer', 'min:1'],
         ];
     }
 }
