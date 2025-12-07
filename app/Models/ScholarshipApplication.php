@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class ScholarshipApplication extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'scholarship_id',
+        'student_id',
+        'status',
+        'application_essay',
+        'additional_documents',
+        'rejection_reason',
+        'reviewed_by',
+        'applied_at',
+        'reviewed_at',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'additional_documents' => 'array',
+            'applied_at' => 'datetime',
+            'reviewed_at' => 'datetime',
+        ];
+    }
+
+    public function scholarship()
+    {
+        return $this->belongsTo(Scholarship::class);
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'student_id');
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function receipts()
+    {
+        return $this->hasMany(ScholarshipReceipt::class, 'application_id');
+    }
+
+    public function getAmountAttribute()
+    {
+        return $this->scholarship->amount ?? 0;
+    }
+}
+

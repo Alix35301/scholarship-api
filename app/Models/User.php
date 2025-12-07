@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -68,6 +69,16 @@ class User extends Authenticatable
         return $this->hasMany(Event::class, 'organizer_id');
     }
 
+    public function scholarshipApplications()
+    {
+        return $this->hasMany(ScholarshipApplication::class, 'student_id');
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
     public function getTotalSalesAttribute()
     {
         return $this->sales()->where('status', 'completed')->count();
@@ -85,11 +96,35 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
-        return $this->role === 'admin';
+        return $this->roles()->where('slug', 'admin')->exists();
     }
 
-    public function isSeller()
+    public function isStudent()
     {
-        return $this->role === 'seller';
+        return $this->roles()->where('slug', 'student')->exists();
+    }
+
+    public function hasRole(string $slug): bool
+    {
+        return $this->roles()->where('slug', $slug)->exists();
+    }
+
+    public function hasPermission(string $routeName): bool
+    {
+        return $this->roles()
+            ->whereHas('permissions', function ($query) use ($routeName) {
+                $query->where('route_name', $routeName);
+            })
+            ->exists();
+    }
+
+    public function permissions()
+    {
+        return $this->roles()
+            ->with('permissions')
+            ->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->unique('id');
     }
 }
