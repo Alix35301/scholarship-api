@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ReceiptStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -15,9 +16,8 @@ class VerifyReceiptRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['required', Rule::in(['verified', 'rejected'])],
+            'status' => ['required', Rule::enum(ReceiptStatus::class)->only([ReceiptStatus::Approved, ReceiptStatus::Rejected])],
             'rejection_reason' => ['required_if:status,rejected', 'nullable', 'string'],
         ];
     }
 }
-
