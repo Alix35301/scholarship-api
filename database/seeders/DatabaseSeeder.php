@@ -7,6 +7,9 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Database\Seeders\ScholarshipSeeder;
+use Database\Seeders\ScholarshipApplicationSeeder;
+use App\Models\Role;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,11 +19,23 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
+        Role::create([
+            'name' => 'Admin',
+            'slug' => 'admin',
+            'description' => 'Admin role with full access',
+        ]);
+        Role::create([
+            'name' => 'Student',
+            'slug' => 'student',
+            'description' => 'Student role for scholarship applicants',
+        ]);
+
         $admin = User::create([
             'name' => 'Admin',
             'email' => 'admin@admin.com',
             'password' => Hash::make('password'),
         ]);
+        $admin->roles()->attach(Role::where('slug', 'admin')->first());
         $adminToken = $admin->createToken('auth-token')->plainTextToken;
 
         $user = User::create([
@@ -28,6 +43,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'user@user.com',
             'password' => Hash::make('password'),
         ]);
+        $user->roles()->attach(Role::where('slug', 'student')->first());
         $userToken = $user->createToken('auth-token')->plainTextToken;
 
 
@@ -36,6 +52,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             ScholarshipSeeder::class,
+            ScholarshipApplicationSeeder::class,
         ]);
     }
 }

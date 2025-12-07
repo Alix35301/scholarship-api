@@ -20,7 +20,6 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'status' => $this->status,
-            'commission_rate' => $this->commission_rate,
             'notes' => $this->notes,
             'role' => $this->role,
             'roles' => $this->whenLoaded('roles', function () {
@@ -35,9 +34,6 @@ class UserResource extends JsonResource
             'email_verified_at' => $this->email_verified_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'total_sales' => $this->when(isset($this->total_sales), $this->total_sales),
-            'total_revenue' => $this->when(isset($this->total_revenue), $this->total_revenue),
-            'total_commission' => $this->when(isset($this->total_commission), $this->total_commission),
         ];
     }
 }

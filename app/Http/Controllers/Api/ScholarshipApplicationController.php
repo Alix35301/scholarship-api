@@ -15,17 +15,6 @@ class ScholarshipApplicationController extends Controller
     {
         $query = ScholarshipApplication::query();
 
-        if ($request->user()->isStudent()) {
-            $query->where('student_id', $request->user()->id);
-        }
-
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->has('scholarship_id')) {
-            $query->where('scholarship_id', $request->scholarship_id);
-        }
 
         $applications = $query->with(['scholarship', 'student', 'reviewer', 'receipts'])
             ->latest()
