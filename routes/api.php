@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\ScholarshipApplicationController;
 use App\Http\Controllers\Api\ScholarshipReceiptController;
+use App\Http\Controllers\Api\ScholarshipBudgetController;
 use App\Http\Controllers\Api\CostCategoryController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
 
+
+    // Budgets
+    Route::get('/scholarships/{scholarship}/budgets', [ScholarshipBudgetController::class, 'index']);
+    Route::post('/scholarships/{scholarship}/budgets', [ScholarshipBudgetController::class, 'store']);
+    Route::get('/scholarships/{scholarship}/budgets/{budget}', [ScholarshipBudgetController::class, 'show']);
+    Route::put('/scholarships/{scholarship}/budgets/{budget}', [ScholarshipBudgetController::class, 'update']);
+    Route::delete('/scholarships/{scholarship}/budgets/{budget}', [ScholarshipBudgetController::class, 'destroy']);
     // Scholarships
     Route::get('/scholarships', [ScholarshipController::class, 'index']);
     Route::get('/scholarships/{scholarship}', [ScholarshipController::class, 'show']);
@@ -47,6 +55,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/cost-categories/{costCategory}', [CostCategoryController::class, 'update'])->middleware('student');
     Route::delete('/cost-categories/{costCategory}', [CostCategoryController::class, 'destroy'])->middleware('student');
 
+
+
+    
     // Admin only routes
     Route::middleware('admin')->group(function () {
         // Scholarships management

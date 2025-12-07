@@ -66,8 +66,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             ScholarshipSeeder::class,
-            ScholarshipApplicationSeeder::class,
             CostCategorySeeder::class,
+            ScholarshipBudgetSeeder::class,
+            ScholarshipApplicationSeeder::class,
             ActivityLogSeeder::class,
         ]);
     }

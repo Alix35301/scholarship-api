@@ -50,6 +50,11 @@ class Scholarship extends Model
         );
     }
 
+    public function budgets()
+    {
+        return $this->hasMany(ScholarshipBudget::class);
+    }
+
     public function getTotalApprovedAmountAttribute()
     {
         $approvedCount = $this->applications()
