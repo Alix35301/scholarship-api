@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ApplicationStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -52,7 +53,7 @@ class Scholarship extends Model
     public function getTotalApprovedAmountAttribute()
     {
         $approvedCount = $this->applications()
-            ->where('status', 'approved')
+            ->where('status', ApplicationStatus::Approved)
             ->count();
         
         return $approvedCount * $this->amount;

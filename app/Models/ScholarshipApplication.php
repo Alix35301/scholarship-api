@@ -2,12 +2,28 @@
 
 namespace App\Models;
 
+use App\Enums\ApplicationStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class ScholarshipApplication extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['status', 'reviewed_by', 'reviewed_at', 'rejection_reason', 'scholarship_id', 'student_id'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => 'Application created',
+                'updated' => 'Application updated',
+                default => "Application {$eventName}",
+            });
+    }
 
     protected $fillable = [
         'scholarship_id',
@@ -24,6 +40,7 @@ class ScholarshipApplication extends Model
     protected function casts(): array
     {
         return [
+            'status' => ApplicationStatus::class,
             'additional_documents' => 'array',
             'applied_at' => 'datetime',
             'reviewed_at' => 'datetime',

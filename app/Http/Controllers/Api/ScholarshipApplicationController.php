@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentUploadRequest;
 use App\Http\Requests\ReviewApplicationRequest;
 use App\Http\Requests\ScholarshipApplicationRequest;
+use App\Http\Resources\ActivityLogResource;
 use App\Http\Resources\DocumentResource;
 use App\Http\Resources\ScholarshipApplicationResource;
 use App\Models\Document;
 use App\Models\ScholarshipApplication;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -46,6 +48,17 @@ class ScholarshipApplicationController extends Controller
         ]);
 
         $application->load(['scholarship', 'student']);
+
+        $activityLogService = new ActivityLogService();
+        $activityLogService->log(
+            $application,
+            'Application created',
+            [
+                'scholarship_id' => $application->scholarship_id,
+                'status' => $application->status->value,
+            ],
+            $request->user()
+        );
 
         return new ScholarshipApplicationResource($application);
     }
@@ -97,6 +110,18 @@ class ScholarshipApplicationController extends Controller
         $document->load('application');
 
         return new DocumentResource($document);
+    }
+
+    public function logs(Request $request, ScholarshipApplication $application)
+    {
+        if ($application->student_id !== $request->user()->id && !$request->user()->isAdmin()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $service = new ActivityLogService();
+        $logs = $service->getPaginatedLogsForModel($application, $request->get('per_page', 15));
+
+        return ActivityLogResource::collection($logs);
     }
 }
 

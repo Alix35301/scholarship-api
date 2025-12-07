@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Database\Seeders\ScholarshipSeeder;
 use Database\Seeders\ScholarshipApplicationSeeder;
 use App\Models\Role;
+use Database\Seeders\ActivityLogSeeder;
 
 
 class DatabaseSeeder extends Seeder
@@ -53,6 +54,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ScholarshipSeeder::class,
             ScholarshipApplicationSeeder::class,
+            ActivityLogSeeder::class,
         ]);
     }
 }

@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/applications', [ScholarshipApplicationController::class, 'store'])->middleware('student');
     Route::post('/applications/{application}/documents', [ScholarshipApplicationController::class, 'uploadDocuments'])->middleware('student');
     Route::get('/applications/{application}', [ScholarshipApplicationController::class, 'show']);
+    Route::get('/applications/{application}/logs', [ScholarshipApplicationController::class, 'logs']);
     
 
     

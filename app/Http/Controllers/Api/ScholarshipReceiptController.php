@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ApplicationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ScholarshipReceiptRequest;
 use App\Http\Requests\VerifyReceiptRequest;
@@ -44,7 +45,7 @@ class ScholarshipReceiptController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        if ($application->status !== 'approved') {
+        if ($application->status !== ApplicationStatus::Approved) {
             abort(422, 'Application must be approved before submitting receipts');
         }
 
