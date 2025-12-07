@@ -19,3 +19,7 @@ schema.png
 
 ## Postman Collection is attached
 /storage/postman/api_collection
+
+## Assumptions
+disburement schedules will be generated automatically when student is awarded
+can also be added manually
