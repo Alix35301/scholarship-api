@@ -38,5 +38,10 @@ class PlannedDisbursement extends Model
     {
         return $this->hasMany(Disbursement::class);
     }
+
+    public function paymentSchedules()
+    {
+        return $this->hasMany(PaymentSchedule::class);
+    }
 }
 

@@ -12,5 +12,14 @@ class CostCategory extends Model
     protected $fillable = [
         'name',
         'category',
+        'disbursement_type',
+        'disbursement_config',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'disbursement_config' => 'array',
+        ];
+    }
 }

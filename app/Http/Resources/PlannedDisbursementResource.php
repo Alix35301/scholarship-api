@@ -19,6 +19,7 @@ class PlannedDisbursementResource extends JsonResource
             'updated_at' => $this->updated_at,
             'cost_category' => new CostCategoryResource($this->whenLoaded('costCategory')),
             'disbursements' => DisbursementResource::collection($this->whenLoaded('disbursements')),
+            'payment_schedules' => PaymentScheduleResource::collection($this->whenLoaded('paymentSchedules')),
         ];
     }
 }

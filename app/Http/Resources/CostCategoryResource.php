@@ -13,6 +13,8 @@ class CostCategoryResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'category' => $this->category,
+            'disbursement_type' => $this->disbursement_type,
+            'disbursement_config' => $this->disbursement_config,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
