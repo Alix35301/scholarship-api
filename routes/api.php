@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\ScholarshipApplicationController;
 use App\Http\Controllers\Api\ScholarshipReceiptController;
+use App\Http\Controllers\Api\CostCategoryController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -38,6 +39,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/receipts', [ScholarshipReceiptController::class, 'index']);
     Route::post('/receipts', [ScholarshipReceiptController::class, 'store'])->middleware('student');
     Route::get('/receipts/{receipt}', [ScholarshipReceiptController::class, 'show']);
+
+    // Cost Categories
+    Route::get('/cost-categories', [CostCategoryController::class, 'index']);
+    Route::post('/cost-categories', [CostCategoryController::class, 'store'])->middleware('student');
+    Route::get('/cost-categories/{costCategory}', [CostCategoryController::class, 'show']);
+    Route::put('/cost-categories/{costCategory}', [CostCategoryController::class, 'update'])->middleware('student');
+    Route::delete('/cost-categories/{costCategory}', [CostCategoryController::class, 'destroy'])->middleware('student');
 
     // Admin only routes
     Route::middleware('admin')->group(function () {

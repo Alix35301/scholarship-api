@@ -20,40 +20,54 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        Role::create([
-            'name' => 'Admin',
-            'slug' => 'admin',
-            'description' => 'Admin role with full access',
-        ]);
-        Role::create([
-            'name' => 'Student',
-            'slug' => 'student',
-            'description' => 'Student role for scholarship applicants',
-        ]);
+        Role::firstOrCreate(
+            ['slug' => 'admin'],
+            [
+                'name' => 'Admin',
+                'description' => 'Admin role with full access',
+            ]
+        );
+        Role::firstOrCreate(
+            ['slug' => 'student'],
+            [
+                'name' => 'Student',
+                'description' => 'Student role for scholarship applicants',
+            ]
+        );
 
-        $admin = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('password'),
-        ]);
-        $admin->roles()->attach(Role::where('slug', 'admin')->first());
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@admin.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('password'),
+            ]
+        );
+        if (!$admin->hasRole('admin')) {
+            $admin->roles()->attach(Role::where('slug', 'admin')->first());
+        }
+        $admin->tokens()->delete();
         $adminToken = $admin->createToken('auth-token')->plainTextToken;
 
-        $user = User::create([
-            'name' => 'User',
-            'email' => 'user@user.com',
-            'password' => Hash::make('password'),
-        ]);
-        $user->roles()->attach(Role::where('slug', 'student')->first());
+        $user = User::firstOrCreate(
+            ['email' => 'user@user.com'],
+            [
+                'name' => 'User',
+                'password' => Hash::make('password'),
+            ]
+        );
+        if (!$user->hasRole('student')) {
+            $user->roles()->attach(Role::where('slug', 'student')->first());
+        }
+        $user->tokens()->delete();
         $userToken = $user->createToken('auth-token')->plainTextToken;
 
-
-        echo('Admin Token: ' . $adminToken);
-        echo('User Token: ' . $userToken);
+        echo('Admin Token: ' . $adminToken . PHP_EOL);
+        echo('User Token: ' . $userToken . PHP_EOL);
 
         $this->call([
             ScholarshipSeeder::class,
             ScholarshipApplicationSeeder::class,
+            CostCategorySeeder::class,
             ActivityLogSeeder::class,
         ]);
     }
