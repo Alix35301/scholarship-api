@@ -39,21 +39,30 @@ class Scholarship extends Model
 
     public function receipts()
     {
-        return $this->hasManyThrough(ScholarshipReceipt::class, ScholarshipApplication::class);
+        return $this->hasManyThrough(
+            ScholarshipReceipt::class,
+            ScholarshipApplication::class,
+            'scholarship_id',     // Foreign key on applications table
+            'application_id',     // Foreign key on receipts table
+            'id',                 // Local key on scholarships table
+            'id'                  // Local key on applications table
+        );
     }
 
     public function getTotalApprovedAmountAttribute()
     {
-        return $this->applications()
+        $approvedCount = $this->applications()
             ->where('status', 'approved')
-            ->sum('amount') ?? 0;
+            ->count();
+        
+        return $approvedCount * $this->amount;
     }
 
     public function getTotalReceiptsAmountAttribute()
     {
         return $this->receipts()
-            ->where('status', 'verified')
-            ->sum('amount') ?? 0;
+            ->where('scholarship_receipts.status', 'verified')
+            ->sum('scholarship_receipts.amount') ?? 0;
     }
 
     public function getRemainingBudgetAttribute()

@@ -12,24 +12,10 @@ class ScholarshipController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Scholarship::query();
+        $query = Scholarship::whereStatus('open')->latest()->paginate();
 
-        if ($request->user()->isStudent()) {
-            $query->where('status', 'open');
-        }
-
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $scholarships = $query->with(['applications' => function($q) use ($request) {
-            if ($request->user()->isStudent()) {
-                $q->where('student_id', $request->user()->id);
-            }
-        }])->latest()->paginate();
-
-        return ScholarshipResource::collection($scholarships);
-    }
+        return ScholarshipResource::collection($query);
+    }   
 
     public function store(ScholarshipRequest $request)
     {

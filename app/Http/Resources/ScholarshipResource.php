@@ -23,7 +23,6 @@ class ScholarshipResource extends JsonResource
             'total_approved_amount' => $this->when(isset($this->total_approved_amount), $this->total_approved_amount),
             'total_receipts_amount' => $this->when(isset($this->total_receipts_amount), $this->total_receipts_amount),
             'remaining_budget' => $this->when(isset($this->remaining_budget), $this->remaining_budget),
-            'applications' => ScholarshipApplicationResource::collection($this->whenLoaded('applications')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

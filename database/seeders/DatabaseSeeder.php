@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Database\Seeders\ScholarshipSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,31 +15,27 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'name' => 'admin',
-        //     'email' => 'ad@example.com',
-        // ]);
-
-        User::factory()->create([
-            'name' => 'Amany',
-            'email' => 'amanii.arif@gmail.com',
+        $admin = User::create([
+            'name' => 'Admin',
+            'email' => 'admin@admin.com',
+            'password' => Hash::make('password'),
         ]);
+        $adminToken = $admin->createToken('auth-token')->plainTextToken;
 
-        User::factory()->create([
-            'name' => 'Adhu Arif',
-            'email' => 'adhuarif@gmail.com',
+        $user = User::create([
+            'name' => 'User',
+            'email' => 'user@user.com',
+            'password' => Hash::make('password'),
         ]);
+        $userToken = $user->createToken('auth-token')->plainTextToken;
 
-        User::factory()->create([
-            'name' => 'Ainy',
-            'email' => 'ainy@gmail.com',
-        ]);
+
+        echo('Admin Token: ' . $adminToken);
+        echo('User Token: ' . $userToken);
 
         $this->call([
-            // EventSeeder::class,
-            // ProductSeeder::class,
+            ScholarshipSeeder::class,
         ]);
     }
 }
