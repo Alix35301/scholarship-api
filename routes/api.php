@@ -66,7 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/scholarships/{scholarship}', [ScholarshipController::class, 'destroy']);
         
         // Application review
-        Route::post('/applications/{application}/review', [ScholarshipApplicationController::class, 'review']);
+        Route::post('/admin/applications/{id}/review', [ScholarshipApplicationController::class, 'review']);
         
         // Receipt verification
         Route::post('/receipts/{receipt}/verify', [ScholarshipReceiptController::class, 'verify']);

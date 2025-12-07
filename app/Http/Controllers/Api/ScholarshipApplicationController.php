@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ApplicationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentUploadRequest;
 use App\Http\Requests\ReviewApplicationRequest;
@@ -19,7 +20,8 @@ use Illuminate\Support\Facades\Storage;
 class ScholarshipApplicationController extends Controller
 {
     public function __construct(
-        private ScholarshipApplicationService $scholarshipApplicationService
+        private ScholarshipApplicationService $scholarshipApplicationService,
+        private ActivityLogService $activityLogService
     ) {
     }
 
@@ -66,8 +68,12 @@ class ScholarshipApplicationController extends Controller
         return new ScholarshipApplicationResource($application);
     }
 
-    public function review(ReviewApplicationRequest $request, ScholarshipApplication $application)
+    public function review(ReviewApplicationRequest $request, string $id)
     {
+        $application = ScholarshipApplication::findOrFail($id);
+        
+        $oldStatus = $application->status;
+
         $application->update([
             'status' => $request->status,
             'rejection_reason' => $request->rejection_reason,
@@ -76,6 +82,18 @@ class ScholarshipApplicationController extends Controller
         ]);
 
         $application->load(['scholarship', 'student', 'reviewer']);
+
+        $this->activityLogService->log(
+            $application,
+            $request->status === ApplicationStatus::Approved ? 'Application approved' : 'Application rejected',
+            [
+                'old_status' => $oldStatus->value,
+                'new_status' => $request->status->value,
+                'rejection_reason' => $request->rejection_reason,
+                'reviewed_by' => $request->user()->id,
+            ],
+            $request->user()
+        );
 
         return new ScholarshipApplicationResource($application);
     }
