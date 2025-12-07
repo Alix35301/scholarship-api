@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DocumentUploadRequest;
 use App\Http\Requests\ReviewApplicationRequest;
 use App\Http\Requests\ScholarshipApplicationRequest;
+use App\Http\Resources\DocumentResource;
 use App\Http\Resources\ScholarshipApplicationResource;
+use App\Models\Document;
 use App\Models\ScholarshipApplication;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ScholarshipApplicationController extends Controller
 {
@@ -59,6 +63,30 @@ class ScholarshipApplicationController extends Controller
         $application->load(['scholarship', 'student', 'reviewer']);
 
         return new ScholarshipApplicationResource($application);
+    }
+
+    public function uploadDocuments(DocumentUploadRequest $request, ScholarshipApplication $application)
+    {
+        if ($application->student_id !== $request->user()->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $file = $request->file('file');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = $file->storeAs('documents/applications/' . $application->id, $fileName, 'public');
+
+        $document = Document::create([
+            'application_id' => $application->id,
+            'file_name' => $file->getClientOriginalName(),
+            'file_path' => $filePath,
+            'mime_type' => $file->getMimeType(),
+            'file_size' => $file->getSize(),
+            'description' => $request->description,
+        ]);
+
+        $document->load('application');
+
+        return new DocumentResource($document);
     }
 }
 

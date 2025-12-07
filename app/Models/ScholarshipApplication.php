@@ -50,6 +50,11 @@ class ScholarshipApplication extends Model
         return $this->hasMany(ScholarshipReceipt::class, 'application_id');
     }
 
+    public function documents()
+    {
+        return $this->hasMany(Document::class, 'application_id');
+    }
+
     public function getAmountAttribute()
     {
         return $this->scholarship->amount ?? 0;
