@@ -23,3 +23,6 @@ schema.png
 ## Assumptions
 disburement schedules will be generated automatically when student is awarded
 can also be added manually
+
+## Testing
+todo - multiple tests fails
