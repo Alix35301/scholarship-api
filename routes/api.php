@@ -18,6 +18,8 @@ use App\Http\Controllers\Api\DisbursementReceiptController;
 use App\Http\Controllers\Api\AwardScheduleController;
 use App\Http\Controllers\Api\DisbursementPaymentController;
 use App\Http\Controllers\Api\ReceiptVerificationController;
+use App\Http\Controllers\Api\ScholarshipReportController;
+use App\Http\Controllers\Api\AwardReportController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -108,9 +110,9 @@ Route::middleware('auth:sanctum')->group(function () {
         // receipt verification
         Route::post('/admin/receipts/{id}/verify', [ReceiptVerificationController::class, 'verify']);
 
-        // GET /api/admin/disbursements
-        // GET /api/admin/reports/scholarships/{id}
-        // GET /api/admin/reports/awards/{awardId}
+        // reports
+        Route::get('/admin/reports/scholarships/{id}', [ScholarshipReportController::class, 'show']);
+        Route::get('/admin/reports/awards/{id}', [AwardReportController::class, 'show']);
 
     });
 
