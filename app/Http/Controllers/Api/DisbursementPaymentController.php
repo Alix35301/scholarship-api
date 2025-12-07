@@ -35,6 +35,15 @@ class DisbursementPaymentController extends Controller
             abort(400, 'Cannot pay a cancelled disbursement');
         }
 
+        // Validate no overpayment: Check against remaining scheduled amount
+        $remainingScheduled = \App\Models\PaymentSchedule::where('planned_disbursement_id', $disbursement->planned_disbursement_id)
+            ->where('status', 'pending')
+            ->sum('amount');
+        
+        if ($disbursement->amount > $remainingScheduled) {
+            abort(400, 'Disbursement amount exceeds remaining scheduled amount. Remaining scheduled: ' . number_format($remainingScheduled, 2));
+        }
+
         // Update disbursement status to completed
         $disbursement->update([
             'status' => 'completed',

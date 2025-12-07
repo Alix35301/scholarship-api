@@ -9,6 +9,7 @@ use App\Http\Resources\DisbursementResource;
 use App\Http\Resources\PlannedDisbursementResource;
 use App\Models\Award;
 use App\Models\Disbursement;
+use App\Models\PaymentSchedule;
 use App\Models\PlannedDisbursement;
 use Illuminate\Http\Request;
 
@@ -92,7 +93,16 @@ class DisbursementController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        // Check if amount exceeds remaining amount
+        // Validate no overpayment: Check against remaining scheduled amount (pending payment schedules)
+        $remainingScheduled = PaymentSchedule::where('planned_disbursement_id', $plannedDisbursement->id)
+            ->where('status', 'pending')
+            ->sum('amount');
+        
+        if ($request->amount > $remainingScheduled) {
+            abort(400, 'Disbursement amount exceeds remaining scheduled amount. Remaining scheduled: ' . number_format($remainingScheduled, 2));
+        }
+        
+        // Also check against remaining amount as a secondary safeguard
         if ($request->amount > $plannedDisbursement->remaining_amount) {
             abort(400, 'Disbursement amount exceeds remaining amount');
         }
@@ -120,6 +130,24 @@ class DisbursementController extends Controller
 
         $oldAmount = $disbursement->amount;
         $oldStatus = $disbursement->status;
+        
+        // Validate no overpayment if amount is being changed
+        if ($request->has('amount')) {
+            $newAmount = $request->input('amount');
+            $remainingScheduled = PaymentSchedule::where('planned_disbursement_id', $plannedDisbursement->id)
+                ->where('status', 'pending')
+                ->sum('amount');
+            
+            // If this disbursement is already counted in remaining scheduled, add its old amount back
+            // Otherwise, check new amount directly
+            if ($disbursement->status === 'pending') {
+                $remainingScheduled += $oldAmount; // Add back old amount since it was already accounted for
+            }
+            
+            if ($newAmount > $remainingScheduled) {
+                abort(400, 'Disbursement amount exceeds remaining scheduled amount. Remaining scheduled: ' . number_format($remainingScheduled, 2));
+            }
+        }
         
         $disbursement->update($request->validated());
 

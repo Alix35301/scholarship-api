@@ -111,6 +111,20 @@ class PaymentScheduleService
 
     public function createManualSchedule(PlannedDisbursement $plannedDisbursement, array $data): PaymentSchedule
     {
+        // Validate no over-scheduling: Check that total scheduled amount doesn't exceed allocated amount
+        $totalScheduled = PaymentSchedule::where('planned_disbursement_id', $plannedDisbursement->id)
+            ->sum('amount');
+        
+        $newScheduleAmount = $data['amount'];
+        
+        if ($totalScheduled + $newScheduleAmount > $plannedDisbursement->allocated_amount) {
+            throw new \Exception(
+                "Cannot schedule amount: " . number_format($newScheduleAmount, 2) . 
+                ". Total scheduled would be " . number_format($totalScheduled + $newScheduleAmount, 2) . 
+                ", exceeding committed amount of " . number_format($plannedDisbursement->allocated_amount, 2) . "."
+            );
+        }
+        
         return PaymentSchedule::create([
             'planned_disbursement_id' => $plannedDisbursement->id,
             'amount' => $data['amount'],

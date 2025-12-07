@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Award;
 use App\Models\PlannedDisbursement;
 use App\Models\ScholarshipApplication;
+use App\Models\ScholarshipBudget;
 
 class AwardService
 {
@@ -20,6 +21,37 @@ class AwardService
         // Check if application already has an award
         if ($application->award) {
             throw new \Exception('This application has already been awarded.');
+        }
+
+        // Validate no over-commitment: Check cumulative committed amounts per category
+        if ($application->category_costs) {
+            $scholarshipId = $application->scholarship_id;
+            
+            foreach ($application->category_costs as $categoryId => $amount) {
+                // Get budget for this category
+                $budget = ScholarshipBudget::where('scholarship_id', $scholarshipId)
+                    ->where('cost_category_id', $categoryId)
+                    ->first();
+                
+                if ($budget) {
+                    // Calculate total already committed for this category in this scholarship
+                    $totalCommitted = PlannedDisbursement::whereHas('award.application', function ($query) use ($scholarshipId) {
+                        $query->where('scholarship_id', $scholarshipId);
+                    })
+                    ->where('cost_category_id', $categoryId)
+                    ->sum('allocated_amount');
+                    
+                    // Check if new amount would exceed budget
+                    if ($totalCommitted + $amount > $budget->budget) {
+                        $categoryName = $budget->costCategory?->name ?? "Category {$categoryId}";
+                        throw new \Exception(
+                            "Cannot commit {$categoryName} amount: " . number_format($amount, 2) . 
+                            ". Total committed would be " . number_format($totalCommitted + $amount, 2) . 
+                            ", exceeding budget limit of " . number_format($budget->budget, 2) . "."
+                        );
+                    }
+                }
+            }
         }
 
         // Calculate total amount from category costs
