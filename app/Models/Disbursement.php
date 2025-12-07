@@ -15,6 +15,7 @@ class Disbursement extends Model
         'date',
         'status',
         'notes',
+        'idempotency_key',
     ];
 
     protected function casts(): array

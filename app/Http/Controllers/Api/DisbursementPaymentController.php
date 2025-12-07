@@ -13,8 +13,22 @@ class DisbursementPaymentController extends Controller
     {
         $disbursement = Disbursement::with('plannedDisbursement')->findOrFail($id);
 
+        // Check if this idempotency key was already used for a different disbursement
+        $existingWithKey = Disbursement::where('idempotency_key', $request->idempotency_key)
+            ->where('id', '!=', $id)
+            ->first();
+
+        if ($existingWithKey) {
+            abort(409, 'This idempotency key has already been used for a different disbursement');
+        }
+
         if ($disbursement->status === 'completed') {
-            return new DisbursementResource($disbursement->load('plannedDisbursement.costCategory'));
+            // If same idempotency key, return success (idempotent)
+            if ($disbursement->idempotency_key === $request->idempotency_key) {
+                return new DisbursementResource($disbursement->load('plannedDisbursement.costCategory'));
+            }
+            // Different key trying to pay already completed disbursement
+            abort(400, 'Disbursement is already completed');
         }
 
         if ($disbursement->status === 'cancelled') {
@@ -26,6 +40,7 @@ class DisbursementPaymentController extends Controller
             'status' => 'completed',
             'date' => $request->payment_date ?? now(),
             'notes' => $request->notes ?? $disbursement->notes,
+            'idempotency_key' => $request->idempotency_key,
         ]);
 
         // Deduct the amount from planned disbursement remaining amount

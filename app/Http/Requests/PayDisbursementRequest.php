@@ -14,6 +14,7 @@ class PayDisbursementRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'idempotency_key' => 'required|string|max:255',
             'payment_date' => 'nullable|date',
             'notes' => 'nullable|string',
         ];
