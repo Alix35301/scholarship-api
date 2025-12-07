@@ -31,6 +31,7 @@ class ScholarshipApplication extends Model
         'status',
         'application_essay',
         'additional_documents',
+        'category_costs',
         'rejection_reason',
         'reviewed_by',
         'applied_at',
@@ -42,6 +43,7 @@ class ScholarshipApplication extends Model
         return [
             'status' => ApplicationStatus::class,
             'additional_documents' => 'array',
+            'category_costs' => 'array',
             'applied_at' => 'datetime',
             'reviewed_at' => 'datetime',
         ];

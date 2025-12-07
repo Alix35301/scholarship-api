@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\ApplicationStatus;
 use App\Models\Scholarship;
 use App\Models\ScholarshipApplication;
+use App\Models\ScholarshipBudget;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -57,8 +58,26 @@ class ScholarshipApplicationSeeder extends Seeder
             ],
         ];
 
-        foreach ($applications as $application) {
-            ScholarshipApplication::create($application);
+        foreach ($applications as $applicationData) {
+            $scholarshipId = $applicationData['scholarship_id'];
+            
+            // Get budgets for this scholarship
+            $budgets = ScholarshipBudget::where('scholarship_id', $scholarshipId)->get();
+            
+            // Generate category_costs based on budgets (70-95% of budget)
+            $categoryCosts = [];
+            foreach ($budgets as $budget) {
+                // Generate a random percentage between 70% and 95%
+                $percentage = rand(70, 95) / 100;
+                $categoryCosts[(string) $budget->cost_category_id] = round($budget->budget * $percentage, 2);
+            }
+            
+            // Add category_costs to application data if budgets exist
+            if (!empty($categoryCosts)) {
+                $applicationData['category_costs'] = $categoryCosts;
+            }
+            
+            ScholarshipApplication::create($applicationData);
         }
     }
 }

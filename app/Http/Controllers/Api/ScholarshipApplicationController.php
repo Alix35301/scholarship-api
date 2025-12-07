@@ -12,11 +12,17 @@ use App\Http\Resources\ScholarshipApplicationResource;
 use App\Models\Document;
 use App\Models\ScholarshipApplication;
 use App\Services\ActivityLogService;
+use App\Services\ScholarshipApplicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ScholarshipApplicationController extends Controller
 {
+    public function __construct(
+        private ScholarshipApplicationService $scholarshipApplicationService
+    ) {
+    }
+
     public function index(Request $request)
     {
         $query = ScholarshipApplication::query();
@@ -41,22 +47,8 @@ class ScholarshipApplicationController extends Controller
 
     public function store(ScholarshipApplicationRequest $request)
     {
-        $application = ScholarshipApplication::create([
-            ...$request->validated(),
-            'student_id' => $request->user()->id,
-            'applied_at' => now(),
-        ]);
-
-        $application->load(['scholarship', 'student']);
-
-        $activityLogService = new ActivityLogService();
-        $activityLogService->log(
-            $application,
-            'Application created',
-            [
-                'scholarship_id' => $application->scholarship_id,
-                'status' => $application->status->value,
-            ],
+        $application = $this->scholarshipApplicationService->createApplication(
+            $request->validated(),
             $request->user()
         );
 
