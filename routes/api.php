@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\CostCategoryController;
 use App\Http\Controllers\Api\DisbursementController;
 use App\Http\Controllers\Api\DisbursementReceiptController;
 use App\Http\Controllers\Api\AwardScheduleController;
+use App\Http\Controllers\Api\DisbursementPaymentController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -101,8 +102,9 @@ Route::middleware('auth:sanctum')->group(function () {
         // schedules
         Route::post('/admin/awards/{awardId}/schedules', [AwardScheduleController::class, 'store']);
 
-        // POST /api/admin/awards/{awardId}/schedules
-        // POST /api/admin/disbursements/{id}/pay
+        // disbursement payment
+        Route::post('/admin/disbursements/{id}/pay', [DisbursementPaymentController::class, 'pay']);
+
         // GET /api/admin/disbursements
         // POST /api/admin/receipts/{id}/verify
         // GET /api/admin/reports/scholarships/{id}
